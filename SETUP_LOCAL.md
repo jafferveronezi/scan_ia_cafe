@@ -1,113 +1,65 @@
-# CaféDiag IA — Guia de Configuração Local
+# Setup Local
 
-Bem-vindo ao **CaféDiag IA**, um aplicativo mobile de diagnóstico inteligente de doenças do café usando inteligência artificial. Este guia fornece instruções passo a passo para configurar e executar o projeto em seu ambiente local.
+Este documento explica como preparar e executar o projeto `scan_ia_cafe` no ambiente local.
 
----
+## 1. Pré-requisitos
 
-## Visão Geral do Projeto
+Instale as ferramentas abaixo antes de começar:
 
-O CaféDiag IA é um aplicativo fullstack construído com:
+- Node.js (recomendado v18+)
+- pnpm (recomendado v9+)
+- Git
+- PostgreSQL (compatível com o `DATABASE_URL` do projeto)
+- Expo CLI (opcional, mas recomendado para desenvolvimento mobile)
 
-| Componente | Tecnologia |
-|-----------|-----------|
-| **Frontend Mobile** | React Native com Expo SDK 54 |
-| **Frontend Web** | React 19 com Next.js (PWA) |
-| **Backend** | Node.js com tRPC e Express |
-| **Banco de Dados** | PostgreSQL com Drizzle ORM |
-| **Autenticação** | OAuth via Manus |
-| **IA/ML** | LLM multimodal para análise de imagens |
-| **Armazenamento** | S3-compatible storage |
-
-O aplicativo permite que produtores rurais fotografem folhas de café e recebam diagnósticos automáticos de doenças com recomendações agronômicas em tempo real.
-
----
-
-## Pré-requisitos
-
-Antes de começar, certifique-se de ter instalado:
-
-### Obrigatório
-
-- **Node.js** (v18 ou superior) — [Download](https://nodejs.org/)
-- **pnpm** (v9 ou superior) — `npm install -g pnpm`
-- **Git** — [Download](https://git-scm.com/)
-- **PostgreSQL** (v14 ou superior) — [Download](https://www.postgresql.org/download/)
-
-### Opcional (para desenvolvimento mobile)
-
-- **Expo CLI** — `npm install -g expo-cli`
-- **Android Studio** (para emulador Android) — [Download](https://developer.android.com/studio)
-- **Xcode** (para emulador iOS, apenas macOS) — [App Store](https://apps.apple.com/br/app/xcode/id497799835)
-
----
-
-## Passo 1: Clonar o Repositório
+## 2. Clonar o repositório
 
 ```bash
 git clone https://github.com/jafferveronezi/scan_ia_cafe.git
 cd scan_ia_cafe
 ```
 
----
-
-## Passo 2: Instalar Dependências
+## 3. Instalar dependências
 
 ```bash
 pnpm install
 ```
 
-Este comando instalará todas as dependências do projeto, incluindo pacotes do frontend, backend e ferramentas de desenvolvimento.
+## 4. Configurar variáveis de ambiente
 
----
-
-## Passo 3: Configurar Variáveis de Ambiente
-
-Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+Crie um arquivo `.env.local` na raiz do projeto com as variáveis necessárias. Exemplo:
 
 ```bash
-# Banco de Dados
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/cafe_diagnostico"
-
-# OAuth Manus (obtenha em https://manus.im)
-EXPO_PUBLIC_OAUTH_PORTAL_URL="https://portal.manus.im"
-EXPO_PUBLIC_OAUTH_SERVER_URL="https://api.manus.im"
-EXPO_PUBLIC_APP_ID="seu-app-id-aqui"
-EXPO_PUBLIC_OWNER_OPEN_ID="seu-owner-id-aqui"
-EXPO_PUBLIC_OWNER_NAME="Seu Nome"
-EXPO_PUBLIC_API_BASE_URL="http://localhost:3000"
-
-# JWT (gere uma chave segura com: openssl rand -base64 32)
 JWT_SECRET="sua-chave-jwt-segura-aqui"
-
-# Node Environment
 NODE_ENV="development"
-
-# Storage (S3-compatible)
-BUILT_IN_FORGE_API_URL="https://storage.manus.im"
-BUILT_IN_FORGE_API_KEY="sua-chave-storage-aqui"
+EXPO_PUBLIC_API_BASE_URL="http://localhost:3000"
 ```
 
-### Gerando JWT_SECRET
+Os principais valores usados pelo projeto são:
 
-Para gerar uma chave JWT segura:
+- `DATABASE_URL` — URL do banco de dados PostgreSQL
+- `JWT_SECRET` — chave secreta JWT para autenticação
+- `NODE_ENV` — ambiente de execução (`development` ou `production`)
+- `EXPO_PUBLIC_API_BASE_URL` — URL base da API local
+
+> Dependendo do fluxo de autenticação e do OAuth Manus, podem existir outras variáveis exigidas pelo servidor.
+
+### Gerando `JWT_SECRET`
 
 ```bash
 openssl rand -base64 32
 ```
 
-Copie a saída e cole no arquivo `.env.local`.
+## 5. Preparar o banco de dados
 
----
-
-## Passo 4: Configurar Banco de Dados
-
-### 4.1 Criar banco de dados PostgreSQL
+### 5.1 Criar o banco
 
 ```bash
 createdb cafe_diagnostico
 ```
 
-Ou via psql:
+Ou usando `psql`:
 
 ```bash
 psql -U postgres
@@ -115,188 +67,86 @@ CREATE DATABASE cafe_diagnostico;
 \q
 ```
 
-### 4.2 Executar migrações
+### 5.2 Executar migrações
 
 ```bash
 pnpm db:push
 ```
 
-Este comando criará todas as tabelas necessárias (users, diagnoses) no banco de dados.
-
-### 4.3 Verificar conexão
+### 5.3 Verificar a configuração
 
 ```bash
 pnpm check
 ```
 
-Se não houver erros, a configuração está correta.
+## 6. Rodar o projeto
 
----
-
-## Passo 5: Executar o Projeto
-
-### Opção A: Desenvolvimento Completo (Frontend + Backend)
+### 6.1 Ambiente completo (frontend + backend)
 
 ```bash
 pnpm dev
 ```
 
-Este comando inicia:
-- **Metro Bundler** (frontend) na porta `8081`
-- **tRPC API Server** (backend) na porta `3000`
-
-Você verá um QR code no terminal para abrir o app no Expo Go (mobile) ou acessar via navegador (web).
-
-### Opção B: Apenas Frontend (com backend externo)
-
-```bash
-pnpm dev:metro
-```
-
-### Opção C: Apenas Backend
+### 6.2 Apenas backend
 
 ```bash
 pnpm dev:server
 ```
 
----
+### 6.3 Apenas frontend
 
-## Passo 6: Acessar o Aplicativo
+```bash
+pnpm dev:metro
+```
 
-### No Navegador (Web)
+### 6.4 Android
 
-Abra [http://localhost:8081](http://localhost:8081) no navegador.
-
-### No Celular (iOS/Android)
-
-1. Instale o aplicativo **Expo Go** na App Store ou Google Play
-2. Abra o app e escaneie o QR code exibido no terminal
-3. O app será carregado automaticamente
-
-### Em Emulador
-
-**Android:**
 ```bash
 pnpm android
 ```
 
-**iOS (apenas macOS):**
+### 6.5 iOS
+
 ```bash
 pnpm ios
 ```
 
----
+### 6.6 Gerar QR code
 
-## Fluxo de Uso
-
-### 1. Login
-
-- Clique em "Entrar com Manus"
-- Você será redirecionado para o portal de autenticação
-- Após login bem-sucedido, será redirecionado de volta ao app
-
-### 2. Home
-
-- Visualize diagnósticos recentes
-- Veja estatísticas de folhas saudáveis vs. com doença
-- Acesse ações rápidas
-
-### 3. Fotografar Folha
-
-- Clique em "Diagnosticar Folha"
-- Use a câmera ou escolha da galeria
-- Tire uma foto clara e bem iluminada da folha
-
-### 4. Processamento IA
-
-- O app enviará a imagem para análise
-- A IA processará e identificará a doença (se houver)
-- Você verá a confiança da análise em tempo real
-
-### 5. Resultado
-
-- Visualize o diagnóstico completo
-- Veja recomendações agronômicas personalizadas
-- Compartilhe o resultado ou salve no histórico
-
-### 6. Histórico
-
-- Acesse todos os diagnósticos anteriores
-- Filtre por data ou tipo de doença
-- Use pull-to-refresh para atualizar
-
-### 7. Perfil
-
-- Visualize estatísticas gerais
-- Alterne entre tema claro e escuro
-- Consulte a base de conhecimento de doenças
-- Faça logout
-
----
-
-## Estrutura do Projeto
-
-```
-scan_ia_cafe/
-├── app/                          # Telas e rotas (Expo Router)
-│   ├── (auth)/                   # Grupo de autenticação
-│   │   ├── _layout.tsx
-│   │   └── login.tsx
-│   ├── (tabs)/                   # Abas principais
-│   │   ├── _layout.tsx
-│   │   ├── index.tsx             # Home
-│   │   ├── history.tsx           # Histórico
-│   │   └── profile.tsx           # Perfil
-│   ├── capture.tsx               # Captura de imagem
-│   ├── processing.tsx            # Processamento IA
-│   ├── result/[id].tsx           # Resultado do diagnóstico
-│   └── _layout.tsx               # Layout raiz
-├── server/                       # Backend tRPC
-│   ├── _core/                    # Núcleo do servidor
-│   │   ├── index.ts              # Bootstrap Express
-│   │   ├── trpc.ts               # Setup tRPC
-│   │   ├── context.ts            # Contexto tRPC
-│   │   ├── oauth.ts              # Rotas OAuth
-│   │   ├── llm.ts                # Integração LLM
-│   │   └── sdk.ts                # SDK de autenticação
-│   ├── db.ts                     # Funções de banco de dados
-│   ├── routers.ts                # Rotas tRPC (diagnoses, health)
-│   └── storage.ts                # Upload para S3
-├── drizzle/                      # Migrações e schema
-│   ├── schema.ts                 # Definição de tabelas
-│   └── migrations/               # Histórico de migrações
-├── components/                   # Componentes React Native
-├── hooks/                        # Custom hooks
-├── lib/                          # Utilitários e providers
-├── constants/                    # Constantes e temas
-├── shared/                       # Tipos compartilhados
-├── assets/                       # Imagens e ícones
-├── tests/                        # Testes com Vitest
-├── package.json                  # Dependências
-├── app.config.ts                 # Configuração Expo
-├── tailwind.config.js            # Configuração Tailwind
-└── theme.config.js               # Paleta de cores
+```bash
+pnpm qr
 ```
 
----
+## 7. Comandos úteis
 
-## Comandos Úteis
+- `pnpm build` — compila o servidor para produção em `dist/`
+- `pnpm start` — inicia o servidor em produção (`node dist/index.js`)
+- `pnpm check` — validação TypeScript sem gerar arquivos
+- `pnpm lint` — executa ESLint
+- `pnpm format` — formata o código com Prettier
+- `pnpm test` — executa os testes com Vitest
 
-| Comando | Descrição |
-|---------|-----------|
-| `pnpm dev` | Inicia frontend + backend em desenvolvimento |
-| `pnpm dev:metro` | Inicia apenas o Metro Bundler (frontend) |
-| `pnpm dev:server` | Inicia apenas o servidor tRPC (backend) |
-| `pnpm check` | Verifica erros TypeScript |
-| `pnpm lint` | Executa ESLint |
-| `pnpm format` | Formata código com Prettier |
-| `pnpm test` | Executa testes com Vitest |
-| `pnpm db:push` | Executa migrações do banco de dados |
-| `pnpm build` | Constrói o backend para produção |
-| `pnpm start` | Inicia o servidor em produção |
-| `pnpm android` | Abre o app no emulador Android |
-| `pnpm ios` | Abre o app no emulador iOS (macOS) |
-| `pnpm qr` | Gera QR code para Expo Go |
+## 8. Acessar a aplicação
+
+### Web
+Abra no navegador o endereço exibido pelo `expo start`. Normalmente:
+
+```bash
+http://localhost:8081
+```
+
+### Mobile
+Use o Expo Go no celular e escaneie o QR code gerado por `pnpm dev`.
+
+### Emuladores
+- Android: `pnpm android`
+- iOS: `pnpm ios` (apenas macOS)
+
+## 9. Dicas rápidas
+
+- Mantenha o backend rodando com `pnpm dev:server` enquanto desenvolve APIs.
+- Use `pnpm dev` para rodar frontend e backend juntos.
+- Atualize `DATABASE_URL` e `EXPO_PUBLIC_API_BASE_URL` conforme o seu ambiente local.
 
 ---
 
