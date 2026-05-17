@@ -30,7 +30,7 @@ pnpm install
 Crie um arquivo `.env.local` na raiz do projeto com as variáveis necessárias. Exemplo:
 
 ```bash
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/cafe_diagnostico"
+DATABASE_URL="file:./dev.sqlite"
 JWT_SECRET="sua-chave-jwt-segura-aqui"
 NODE_ENV="development"
 EXPO_PUBLIC_API_BASE_URL="http://localhost:3000"
@@ -38,7 +38,7 @@ EXPO_PUBLIC_API_BASE_URL="http://localhost:3000"
 
 Os principais valores usados pelo projeto são:
 
-- `DATABASE_URL` — URL do banco de dados PostgreSQL
+- `DATABASE_URL` — URL do banco de dados SQLite local (`file:./dev.sqlite`)
 - `JWT_SECRET` — chave secreta JWT para autenticação
 - `NODE_ENV` — ambiente de execução (`development` ou `production`)
 - `EXPO_PUBLIC_API_BASE_URL` — URL base da API local
@@ -53,18 +53,12 @@ openssl rand -base64 32
 
 ## 5. Preparar o banco de dados
 
-### 5.1 Criar o banco
+### 5.1 Usar SQLite local
+
+Basta apontar o `DATABASE_URL` para um arquivo local, por exemplo:
 
 ```bash
-createdb cafe_diagnostico
-```
-
-Ou usando `psql`:
-
-```bash
-psql -U postgres
-CREATE DATABASE cafe_diagnostico;
-\q
+DATABASE_URL="file:./dev.sqlite"
 ```
 
 ### 5.2 Executar migrações
